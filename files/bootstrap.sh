@@ -417,6 +417,9 @@ fi
 KUBELET_CONFIG=/etc/kubernetes/kubelet/kubelet-config.json
 echo "$(jq ".clusterDNS=[\"$DNS_CLUSTER_IP\"]" $KUBELET_CONFIG)" > $KUBELET_CONFIG
 
+PROVIDER_ID=$(imds 'latest/meta-data/instance-id')
+echo "$(jq '. += {"providerID": '\"$PROVIDER_ID\"'}' $KUBELET_CONFIG)" > $KUBELET_CONFIG
+
 if [[ "${IP_FAMILY}" == "ipv4" ]]; then
   INTERNAL_IP=$(imds 'latest/meta-data/local-ipv4')
 else
